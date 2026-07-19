@@ -1,0 +1,230 @@
+if SERVER then return end
+
+print("[Backrooms] Admin Panel Loaded")
+
+
+local adminFrame
+
+
+local function OpenAdminPanel()
+
+    print("[Backrooms] Opening Admin Panel")
+
+
+    if IsValid(adminFrame) then
+        adminFrame:Remove()
+    end
+
+
+    adminFrame = vgui.Create("DFrame")
+
+    adminFrame:SetSize(800,500)
+    adminFrame:Center()
+    adminFrame:SetTitle("")
+    adminFrame:MakePopup()
+
+
+    function adminFrame:Paint(w,h)
+
+        draw.RoundedBox(
+            8,
+            0,
+            0,
+            w,
+            h,
+            Color(0,0,0,255)
+        )
+
+
+        draw.RoundedBox(
+            8,
+            5,
+            5,
+            w-10,
+            h-10,
+            Color(20,20,20,240)
+        )
+
+
+        draw.RoundedBox(
+            8,
+            5,
+            5,
+            w-10,
+            45,
+            Color(150,0,0,255)
+        )
+
+
+        draw.SimpleText(
+            "BACKROOMS ADMIN PANEL",
+            "DermaLarge",
+            25,
+            10,
+            Color(255,255,255)
+        )
+
+    end
+
+
+
+    local side = vgui.Create("DPanel", adminFrame)
+
+    side:SetSize(200,420)
+    side:SetPos(15,65)
+
+
+    function side:Paint(w,h)
+
+        draw.RoundedBox(
+            6,
+            0,
+            0,
+            w,
+            h,
+            Color(10,10,10,230)
+        )
+
+    end
+
+
+
+    local content = vgui.Create("DPanel", adminFrame)
+
+    content:SetSize(540,420)
+    content:SetPos(230,65)
+
+
+    function content:Paint(w,h)
+
+        draw.RoundedBox(
+            6,
+            0,
+            0,
+            w,
+            h,
+            Color(30,30,30,230)
+        )
+
+
+        draw.SimpleText(
+            "Select an option",
+            "DermaLarge",
+            20,
+            20,
+            Color(255,255,255)
+        )
+
+    end
+
+
+
+    local categories = {
+        "Spawns",
+        "Loot",
+        "Players",
+        "Entities",
+        "Settings"
+    }
+
+
+    local y = 20
+
+
+    for _, name in ipairs(categories) do
+
+        local buttonName = name
+
+        local btn = vgui.Create("DButton", side)
+
+        btn:SetText("")
+        btn:SetSize(160,40)
+        btn:SetPos(20,y)
+
+
+        btn.Paint = function(self,w,h)
+
+    local color = Color(80,0,0,255)
+
+    if self:IsHovered() then
+
+        color = Color(180,0,0,255)
+
+    end
+
+
+    draw.RoundedBox(
+        6,
+        0,
+        0,
+        w,
+        h,
+        color
+    )
+
+
+    draw.SimpleText(
+        buttonName,
+        "DermaDefaultBold",
+        w/2,
+        h/2,
+        Color(255,255,255),
+        TEXT_ALIGN_CENTER,
+        TEXT_ALIGN_CENTER
+    )
+
+end
+
+btn:SetTextColor(Color(255,255,255))
+
+        btn.DoClick = function()
+
+            if name == "Loot" then
+
+                local drop = vgui.Create("DButton", content)
+
+                drop:SetText("Drop Loot Crate")
+
+                drop:SetSize(200,40)
+
+                drop:SetPos(20,70)
+
+
+                drop.DoClick = function()
+
+                    net.Start("BR_DropLootCrate")
+                    net.SendToServer()
+
+                end
+
+            end
+
+        end
+
+
+        y = y + 50
+
+    end
+
+
+end
+
+
+
+hook.Add("PlayerButtonDown", "BR_OpenAdminPanel", function(ply,key)
+
+    if key == KEY_K then
+
+        OpenAdminPanel()
+
+    end
+
+end)
+
+
+
+concommand.Add("backrooms_menu", function()
+
+    OpenAdminPanel()
+
+end)
