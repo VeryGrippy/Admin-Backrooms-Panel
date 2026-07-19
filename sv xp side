@@ -1,0 +1,23 @@
+util.AddNetworkString("BR_SendXP")
+
+
+function BR_AddXP(ply, amount)
+
+    if not IsValid(ply) then return end
+
+    ply.BR_XP = ply.BR_XP or 0
+
+
+    ply.BR_XP = ply.BR_XP + amount
+
+
+    ply:ChatPrint(
+        "+"..amount.." XP"
+    )
+
+
+    net.Start("BR_SendXP")
+        net.WriteInt(ply.BR_XP,32)
+    net.Send(ply)
+
+end
